@@ -8,7 +8,7 @@ This is an API developed for the Fivvy Backend Challenge. The purpose of this AP
     - Java 11
     - Spring Boot 2.7.4
     - Maven
-    - AWS DynamoDbB
+    - AWS DynamoDB
     - Docker
     - JUnit
     - Mockito
