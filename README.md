@@ -41,6 +41,7 @@ To run the API using Docker, follow the steps below:
     docker stop $(docker ps -aq --filter ancestor=fivvy-backend-challenge)
 
 ## Endpoints
+### Endpoints of Disclaimer
 #### List Disclaimers
 
 - Method: GET
@@ -60,22 +61,67 @@ To run the API using Docker, follow the steps below:
 - URL: `http://localhost:8080/disclaimer/`
 - Request body: JSON
 - Description: This endpoint creates a new disclaimer with the data provided in the request body.
+- Request Example:
+
+        {
+            "name":"Terms and Conditions",
+            "text":"Terms and Conditions of the contract",
+            "version":"1.0.0"
+        }
+
+#### Update Disclaimer
+
+- Method: PUT
+- URL: `http://localhost:8080/disclaimer/`
+- Request body: JSON.
+- Description: This endpoint updates an existing disclaimer with the data provided in the request body.
+- Request Example:
+
+        {
+            "id":"972c1826-fee1-4cbb-814f-44c9170f65eb",
+            "text":"Text update",
+            "name":"Name update",
+            "version":"1.0.1"
+        }
+
+#### Delete Disclaimer
+
+- Method: DELETE
+- URL: `http://localhost:8080/disclaimer/{disclaimerId}`
+- Request param:
+    - `disclaimerId`: ID of the disclaimer to delete.
+- Description: This endpoint removes the disclaimer with the specified ID.
+- Request Example:
+
+        DELETE http://localhost:8080/disclaimer/972c1826-fee1-4cbb-814f-44c9170f65eb
+
+
+### Endpoints of Acceptance
+#### List Acceptances
+
+- Method: GET
+- URL: `http://localhost:8080/acceptance/`
+- Request Param:
+  - `userId` (optional): Allows you to filter Acceptances by user ID.
+- Description: This endpoint returns an Acceptance list based on the supplied parameters. Optionally, the `userId` parameter can be provided to filter Acceptances  by user ID.
 - Request Examples:
+        
+        GET http://localhost:8080/acceptance/
 
-{
-    "name":"nombre prueba 123131231231231231231",
-    "text":"prueba 1 sin id en el request",
-    "version":"1.0.0"
-}
+        GET http://localhost:8080/acceptance/?userId=fmiro
 
+ #### Create Acceptance
 
+- Method: POST
+- URL: `http://localhost:8080/acceptance/`
+- Request body: JSON
+- Description: This endpoint creates a new acceptance with the data provided in the request body.
+- Request Example:
 
-
-
-
-
-
-
+        {
+            "disclaimerId":"972c1826-fee1-4cbb-814f-44c9170f65eb",
+            "userId":"fmiro"
+        }
 
 
 
