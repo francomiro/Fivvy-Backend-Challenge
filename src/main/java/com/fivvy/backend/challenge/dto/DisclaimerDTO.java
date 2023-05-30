@@ -13,7 +13,6 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class DisclaimerDTO {
 
-    @JsonIgnore
     private String id;
 
     @NotNull
