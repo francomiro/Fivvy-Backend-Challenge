@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.fivvy.backend.challenge.DisclaimerControllerTest
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.576 s - in com.fivvy.backend.challenge.DisclaimerControllerTest
