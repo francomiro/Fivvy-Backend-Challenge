@@ -1,75 +1,83 @@
-# Fivvy Backend Challenge
+# Documentation 
+# API - Fivvy Backend Challenge
 
-This is a simple challenge to test your skills on building APIs. The Fivvy services use mainly Java and Springboot
-technologies.
+## Description
+This is an API developed for the Fivvy Backend Challenge. The purpose of this API is to manage the acceptance of terms and conditions.
 
-# What to do
+## Technologies
+    - Java 11
+    - Spring Boot 2.7.4
+    - Maven
+    - AWS DynamoDbB
+    - Docker
+    - JUnit
+    - Mockito
 
-Create a simple API to manage disclaimer acceptance of terms and conditions
+## Instructions
+![image](https://github.com/francomiro/Fivvy-Backend-Challenge/assets/38414853/1b03bba0-084c-4fd0-b744-00ceedab611b)
 
-Entities:
+## Run with Docker
+To run the API using Docker, follow the steps below:
 
--**Disclaimer**
-
-    Fields
-
-      -   id
+   1. Make sure you have Docker installed on your system.
+   2. Clone the repository to your local computer.
+   3. Navigate to the root directory of the project and open the console.
+   4. Build the docker image by running the following command
     
-     -   name
+    docker build -t fivvy-backend-challenge .
     
-     -   text
+   5. Start a Docker container based on the created image
+   
+    docker run -p 8080:8080 fivvy-backend-challenge
+   
+   6. Now you can access the API in your browser or use Postman tools to interact with it.
+   7. The API base URL will be:
+        
+    http://localhost:8080
     
-     -   version
     
-     -   create_at
+   To stop the container, you can run the following command in another terminal:
     
-    -   update_at
+    docker stop $(docker ps -aq --filter ancestor=fivvy-backend-challenge)
 
--**Acceptance**
+## Endpoints
+#### List Disclaimers
 
-Fields
+- Method: GET
+- URL: `http://localhost:8080/disclaimer/`
+- Request Param:
+  - `text` (optional): Allows you to filter by Disclaimers whose `text` ttribute contains or is the same as the `text` parameter entered in the request.
+- Description: This endpoint lists all available disclaimers. Optionally, the `text` parameter can be provided to filter disclaimers that contain the text specified within their `text` attribute.
+- Request Examples:
+        
+        GET http://localhost:8080/disclaimer/?text=contract
+        
+        GET http://localhost:8080/disclaimer/
+ 
+ #### Create Disclaimer
 
-    -   disclaimer_id
-    
-    -   user_id
-    
-    -   create_at
+- Method: POST
+- URL: `http://localhost:8080/disclaimer/`
+- Request body: JSON
+- Description: This endpoint creates a new disclaimer with the data provided in the request body.
+- Request Examples:
 
-**Must create a CRUD for a Disclaimer entity**
+{
+    "name":"nombre prueba 123131231231231231231",
+    "text":"prueba 1 sin id en el request",
+    "version":"1.0.0"
+}
 
-- The LIST endpoint must be able to filter the disclaimers by field “text” as an optional parameter.
 
-**Must create CREATE and LIST endpoints for the Acceptance entity**
 
-- The LIST endpoint must be able to filter the acceptances by the “user_id” field as an optional parameter
 
-# Requirements
 
-- All API responses must be JSON
 
-- Provide a README.md file with usage instructions (how to run, endpoints etc)
 
-- Specify a docker image in Readme or include docker compose file.
 
-- The use of non-relational databases like DynamoDB will be taken into account as a plus.
 
-# Recommendations
 
-- TDD
 
-- SOLID
 
-- Code and commits in english (methods, classes, variables, etc)
 
-# Evaluation
 
-- Project structure, architecturing and organization (50%)
-
-- Programming good practices (30%)
-
-- Testing strategy (20%)
-
-# Delivery
-
-You must fork this repository and commit the solution in the solution folder. Your repository must be public. After
-that, send the repository link to recruiter.
