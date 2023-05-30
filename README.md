@@ -1,75 +1,129 @@
-# Fivvy Backend Challenge
+# Documentation 
+# API - Fivvy Backend Challenge
 
-This is a simple challenge to test your skills on building APIs. The Fivvy services use mainly Java and Springboot
-technologies.
+## Description
+This is an API developed for the Fivvy Backend Challenge. The purpose of this API is to manage the acceptance of terms and conditions.
 
-# What to do
+## Technologies
+    - Java 11
+    - Spring Boot 2.7.4
+    - Maven
+    - AWS DynamoDbB
+    - Docker
+    - JUnit
+    - Mockito
 
-Create a simple API to manage disclaimer acceptance of terms and conditions
+## Instructions
+![image](https://github.com/francomiro/Fivvy-Backend-Challenge/assets/38414853/1b03bba0-084c-4fd0-b744-00ceedab611b)
 
-Entities:
+## Run with Docker
+To run the API using Docker, follow the steps below:
 
--**Disclaimer**
-
-    Fields
-
-      -   id
+   1. Make sure you have Docker installed on your system.
+   2. Clone the repository to your local computer.
+   3. Navigate to the root directory of the project and open the console.
+   4. Build the docker image by running the following command
     
-     -   name
+    docker build -t fivvy-backend-challenge .
     
-     -   text
+   5. Start a Docker container based on the created image
+   
+    docker run -p 8080:8080 fivvy-backend-challenge
+   
+   6. Now you can access the API in your browser or use Postman tools to interact with it.
+   7. The API base URL will be:
+        
+    http://localhost:8080
     
-     -   version
     
-     -   create_at
+   To stop the container, you can run the following command in another terminal:
     
-    -   update_at
+    docker stop $(docker ps -aq --filter ancestor=fivvy-backend-challenge)
 
--**Acceptance**
+## Endpoints
+### Endpoints of Disclaimer
+#### List Disclaimers
 
-Fields
+- Method: GET
+- URL: `http://localhost:8080/disclaimer/`
+- Request Param:
+  - `text` (optional): Allows you to filter by Disclaimers whose `text` ttribute contains or is the same as the `text` parameter entered in the request.
+- Description: This endpoint lists all available disclaimers. Optionally, the `text` parameter can be provided to filter disclaimers that contain the text specified within their `text` attribute.
+- Request Examples:
+        
+        GET http://localhost:8080/disclaimer/?text=contract
+        
+        GET http://localhost:8080/disclaimer/
+ 
+ #### Create Disclaimer
 
-    -   disclaimer_id
-    
-    -   user_id
-    
-    -   create_at
+- Method: POST
+- URL: `http://localhost:8080/disclaimer/`
+- Request body: JSON
+- Description: This endpoint creates a new disclaimer with the data provided in the request body.
+- Request Example:
 
-**Must create a CRUD for a Disclaimer entity**
+        {
+            "name":"Terms and Conditions",
+            "text":"Terms and Conditions of the contract",
+            "version":"1.0.0"
+        }
 
-- The LIST endpoint must be able to filter the disclaimers by field “text” as an optional parameter.
+#### Update Disclaimer
 
-**Must create CREATE and LIST endpoints for the Acceptance entity**
+- Method: PUT
+- URL: `http://localhost:8080/disclaimer/`
+- Request body: JSON.
+- Description: This endpoint updates an existing disclaimer with the data provided in the request body.
+- Request Example:
 
-- The LIST endpoint must be able to filter the acceptances by the “user_id” field as an optional parameter
+        {
+            "id":"972c1826-fee1-4cbb-814f-44c9170f65eb",
+            "text":"Text update",
+            "name":"Name update",
+            "version":"1.0.1"
+        }
 
-# Requirements
+#### Delete Disclaimer
 
-- All API responses must be JSON
+- Method: DELETE
+- URL: `http://localhost:8080/disclaimer/{disclaimerId}`
+- Request param:
+    - `disclaimerId`: ID of the disclaimer to delete.
+- Description: This endpoint removes the disclaimer with the specified ID.
+- Request Example:
 
-- Provide a README.md file with usage instructions (how to run, endpoints etc)
+        DELETE http://localhost:8080/disclaimer/972c1826-fee1-4cbb-814f-44c9170f65eb
 
-- Specify a docker image in Readme or include docker compose file.
 
-- The use of non-relational databases like DynamoDB will be taken into account as a plus.
+### Endpoints of Acceptance
+#### List Acceptances
 
-# Recommendations
+- Method: GET
+- URL: `http://localhost:8080/acceptance/`
+- Request Param:
+  - `userId` (optional): Allows you to filter Acceptances by user ID.
+- Description: This endpoint returns an Acceptance list based on the supplied parameters. Optionally, the `userId` parameter can be provided to filter Acceptances  by user ID.
+- Request Examples:
+        
+        GET http://localhost:8080/acceptance/
 
-- TDD
+        GET http://localhost:8080/acceptance/?userId=fmiro
 
-- SOLID
+ #### Create Acceptance
 
-- Code and commits in english (methods, classes, variables, etc)
+- Method: POST
+- URL: `http://localhost:8080/acceptance/`
+- Request body: JSON
+- Description: This endpoint creates a new acceptance with the data provided in the request body.
+- Request Example:
 
-# Evaluation
+        {
+            "disclaimerId":"972c1826-fee1-4cbb-814f-44c9170f65eb",
+            "userId":"fmiro"
+        }
 
-- Project structure, architecturing and organization (50%)
 
-- Programming good practices (30%)
 
-- Testing strategy (20%)
 
-# Delivery
 
-You must fork this repository and commit the solution in the solution folder. Your repository must be public. After
-that, send the repository link to recruiter.
