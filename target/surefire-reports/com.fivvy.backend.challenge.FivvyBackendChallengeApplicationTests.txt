@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.fivvy.backend.challenge.FivvyBackendChallengeApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.335 s - in com.fivvy.backend.challenge.FivvyBackendChallengeApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.224 s - in com.fivvy.backend.challenge.FivvyBackendChallengeApplicationTests
