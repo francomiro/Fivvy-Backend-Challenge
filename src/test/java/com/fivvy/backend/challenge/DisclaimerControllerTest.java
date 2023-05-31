@@ -3,8 +3,9 @@ package com.fivvy.backend.challenge;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fivvy.backend.challenge.controller.DisclaimerController;
 import com.fivvy.backend.challenge.dto.DisclaimerDTO;
-import com.fivvy.backend.challenge.dto.ResponseDTO;
 import com.fivvy.backend.challenge.exception.DisclaimerNotFoundException;
+import com.fivvy.backend.challenge.exception.MissingFieldsException;
+import com.fivvy.backend.challenge.exception.NoDataFoundException;
 import com.fivvy.backend.challenge.model.Disclaimer;
 import com.fivvy.backend.challenge.service.DisclaimerService;
 import org.junit.jupiter.api.Test;
@@ -13,18 +14,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.mock;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(DisclaimerController.class)
 public class DisclaimerControllerTest {
@@ -39,19 +39,17 @@ public class DisclaimerControllerTest {
     private DisclaimerService disclaimerService;
 
 
-    //TESTS listDisclaimer - GET
+//    TESTS listDisclaimer - GET
     @Test
     void getAllDisclaimers_WhenThereIsNoDataAndParamTextIsNull_ReturnAMessage() throws Exception {
-        ResponseDTO response = new ResponseDTO<>();
-        response.setError("There isn't any disclaimer to show");
 
-        when(disclaimerService.listDisclaimer(null)).thenReturn(response);
+        when(disclaimerService.listDisclaimer(java.util.Optional.empty())).thenThrow(new NoDataFoundException("There isn't any disclaimer to show"));
 
         mockMvc.perform(get("/disclaimer/")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.body").doesNotExist())
-                .andExpect(jsonPath("$.error").value("There isn't any disclaimer to show"));
+                .andExpect(jsonPath("$.error.message").value("There isn't any disclaimer to show"));
     }
 
     @Test
@@ -63,10 +61,7 @@ public class DisclaimerControllerTest {
         listDisclaimers.add(disclaimer1);
         listDisclaimers.add(disclaimer2);
 
-        ResponseDTO response = new ResponseDTO<>();
-        response.setBody(listDisclaimers);
-
-        when(disclaimerService.listDisclaimer(null)).thenReturn(response);
+        when(disclaimerService.listDisclaimer(java.util.Optional.empty())).thenReturn(listDisclaimers);
         mockMvc.perform(get("/disclaimer/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -79,17 +74,15 @@ public class DisclaimerControllerTest {
 
     @Test
     void getAllDisclaimers_WhenThereIsNoDataWithParamTextInRequest_ReturnAMessage() throws Exception {
-        ResponseDTO response = new ResponseDTO<>();
-        response.setError("There isn't any disclaimer to show with that text");
 
-        when(disclaimerService.listDisclaimer("Term")).thenReturn(response);
+        when(disclaimerService.listDisclaimer(Optional.of("Term"))).thenThrow( new NoDataFoundException("There isn't any disclaimer to show with that text"));
 
         mockMvc.perform(get("/disclaimer/")
                         .param("text", "Term")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.body").doesNotExist())
-                .andExpect(jsonPath("$.error").value("There isn't any disclaimer to show with that text"));
+                .andExpect(jsonPath("$.error.message").value("There isn't any disclaimer to show with that text"));
     }
 
     @Test
@@ -101,10 +94,7 @@ public class DisclaimerControllerTest {
         listDisclaimers.add(disclaimer2);
         listDisclaimers.add(disclaimer3);
 
-        ResponseDTO response = new ResponseDTO<>();
-        response.setBody(listDisclaimers);
-
-        when(disclaimerService.listDisclaimer("contract")).thenReturn(response);
+        when(disclaimerService.listDisclaimer(Optional.of("contract"))).thenReturn(listDisclaimers);
 
         mockMvc.perform(get("/disclaimer/")
                         .param("text", "contract")
@@ -126,19 +116,13 @@ public class DisclaimerControllerTest {
         disclaimerDTO.setVersion("2.2.1");
         disclaimerDTO.setText("This is the final contract!");
 
-        ResponseDTO response = new ResponseDTO<>();
-        response.setError("BAD REQUEST - Check the fields, they must not be empty or null");
-
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.hasErrors()).thenReturn(true);
-
-        when(disclaimerService.createErrorResponse(response.getError())).thenReturn(response);
+        when(disclaimerService.create(disclaimerDTO)).thenThrow(new MissingFieldsException("Check the fields, they must not be empty or null"));
 
         mockMvc.perform(post("/disclaimer/")
                         .content(objectMapper.writeValueAsString(disclaimerDTO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("BAD REQUEST - Check the fields, they must not be empty or null"))
+                .andExpect(jsonPath("$.error.message").value("Check the fields, they must not be empty or null"))
                 .andExpect(jsonPath("$.body").doesNotExist());
     }
 
@@ -149,15 +133,9 @@ public class DisclaimerControllerTest {
         disclaimerDTO.setVersion("2.2.1");
         disclaimerDTO.setText("This is the final contract!");
 
-        BindingResult bindingResult = mock(BindingResult.class);
-        when(bindingResult.hasErrors()).thenReturn(false);
-
         Disclaimer disclaimer = new Disclaimer(disclaimerDTO.getName(),disclaimerDTO.getText(),disclaimerDTO.getVersion());
-        when(disclaimerService.create(disclaimerDTO)).thenReturn(disclaimer);
 
-        ResponseDTO response = new ResponseDTO<>();
-        response.setBody("Disclaimer created successfully.");
-        when(disclaimerService.createResponse(response.getBody())).thenReturn(response);
+        when(disclaimerService.create(disclaimerDTO)).thenReturn(disclaimer);
 
         mockMvc.perform(post("/disclaimer/")
                         .content(objectMapper.writeValueAsString(disclaimerDTO))
@@ -178,15 +156,11 @@ public class DisclaimerControllerTest {
         when(disclaimerService.update(disclaimerDTO))
                 .thenThrow(new DisclaimerNotFoundException("Disclaimer ID not found"));
 
-        ResponseDTO response = new ResponseDTO<>();
-        response.setError("Disclaimer ID not found");
-        when(disclaimerService.createErrorResponse(response.getError())).thenReturn(response);
-
         mockMvc.perform(put("/disclaimer/")
                         .content(objectMapper.writeValueAsString(disclaimerDTO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("Disclaimer ID not found"))
+                .andExpect(jsonPath("$.error.message").value("Disclaimer ID not found"))
                 .andExpect(jsonPath("$.body").doesNotExist());
     }
 
@@ -205,10 +179,6 @@ public class DisclaimerControllerTest {
         when(disclaimerService.update(disclaimerDTO))
                 .thenReturn(disclaimer);
 
-        ResponseDTO response = new ResponseDTO<>();
-        response.setBody("Disclamer updated successfully.");
-        when(disclaimerService.createResponse(response.getBody())).thenReturn(response);
-
         mockMvc.perform(put("/disclaimer/")
                         .content(objectMapper.writeValueAsString(disclaimerDTO))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -217,5 +187,14 @@ public class DisclaimerControllerTest {
                 .andExpect(jsonPath("$.body").value("Disclamer updated successfully."));
     }
 
+    //TEST DELETE
+    @Test
+    void putDeleteDisclaimer_whenIdIsOK_returnMessage() throws Exception {
+        String disclaimerId = "123";
+        mockMvc.perform(delete("/disclaimer/{disclaimerId}", disclaimerId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.error").doesNotExist())
+                .andExpect(jsonPath("$.body").value("Disclamer deleted successfully."));
+    }
 
 }
