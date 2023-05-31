@@ -41,6 +41,9 @@ To run the API using Docker, follow the steps below:
     docker stop $(docker ps -aq --filter ancestor=fivvy-backend-challenge)
 
 ## Endpoints
+### Postman
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/21855960-3ffda50c-a170-4229-8e3e-dd26deb82d34?action=collection%2Ffork&collection-url=entityId%3D21855960-3ffda50c-a170-4229-8e3e-dd26deb82d34%26entityType%3Dcollection%26workspaceId%3D0614edc3-8799-45d9-8005-77b2f32c3f7b)
+
 ### Endpoints of Disclaimer
 #### List Disclaimers
 
@@ -122,8 +125,5 @@ To run the API using Docker, follow the steps below:
             "disclaimerId":"972c1826-fee1-4cbb-814f-44c9170f65eb",
             "userId":"fmiro"
         }
-
-
-
 
 
