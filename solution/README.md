@@ -21,7 +21,7 @@ To run the API using Docker, follow the steps below:
 
    1. Make sure you have Docker installed on your system.
    2. Clone the repository to your local computer.
-   3. Navigate to the root directory of the project and open the console.
+   3. Navigate to the root directory of the project (folder "solution") and open the console.
    4. Build the docker image by running the following command
     
     docker build -t fivvy-backend-challenge .
